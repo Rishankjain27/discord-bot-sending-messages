@@ -1,21 +1,12 @@
 require("dotenv").config();
 const express = require("express");
-const {
-  Client,
-  GatewayIntentBits,
-  EmbedBuilder,
-  ChannelType
-} = require("discord.js");
+const { Client, GatewayIntentBits, EmbedBuilder, ChannelType } = require("discord.js");
 
 const app = express();
-
-/* ================= EXPRESS ================= */
-
 app.use(express.json());
 app.use(express.static("public"));
 
-/* ================= DISCORD CLIENT ================= */
-
+// ================= DISCORD BOT =================
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -26,18 +17,16 @@ const client = new Client({
 
 let botReady = false;
 
-/* ================= BOT READY ================= */
-
 client.once("ready", () => {
   botReady = true;
   console.log(`Bot logged in as ${client.user.tag}`);
 });
 
-/* ================= GUILDS ================= */
+// ================= API ROUTES =================
 
+// Get all guilds
 app.get("/api/guilds", (req, res) => {
   if (!botReady) return res.status(503).json({ error: "Bot not ready" });
-
   res.json(
     client.guilds.cache.map(g => ({
       id: g.id,
@@ -46,12 +35,11 @@ app.get("/api/guilds", (req, res) => {
   );
 });
 
-/* ================= CHANNELS ================= */
-
+// Get all text channels in a guild
 app.get("/api/channels/:guildId", async (req, res) => {
-  if (!botReady) return res.status(503).json({ error: "Bot not ready" });
-
   try {
+    if (!botReady) return res.status(503).json({ error: "Bot not ready" });
+
     const guild = await client.guilds.fetch(req.params.guildId);
     await guild.channels.fetch();
 
@@ -66,8 +54,7 @@ app.get("/api/channels/:guildId", async (req, res) => {
   }
 });
 
-/* ================= READ MESSAGES (OPTIONAL) ================= */
-
+// Get last 25 messages from a channel
 app.get("/api/messages/:channelId", async (req, res) => {
   try {
     const channel = await client.channels.fetch(req.params.channelId);
@@ -79,9 +66,10 @@ app.get("/api/messages/:channelId", async (req, res) => {
     const messages = await channel.messages.fetch({ limit: 25 });
 
     res.json(
-      messages
+      [...messages.values()]
         .sort((a, b) => a.createdTimestamp - b.createdTimestamp)
         .map(m => ({
+          id: m.id,
           author: m.author?.username || "Unknown",
           content: m.content || "",
           time: new Date(m.createdTimestamp).toLocaleTimeString()
@@ -93,30 +81,21 @@ app.get("/api/messages/:channelId", async (req, res) => {
   }
 });
 
-/* ================= SEND MESSAGE ================= */
-
+// Send a message to a channel
 app.post("/api/send", async (req, res) => {
   try {
     const { channelId, message, embed, color } = req.body;
 
-    if (!channelId || !message) {
-      return res.status(400).json({ error: "Missing data" });
-    }
+    if (!channelId || !message) return res.sendStatus(400);
 
     const channel = await client.channels.fetch(channelId);
 
-    if (!channel || channel.type !== ChannelType.GuildText) {
-      return res.status(400).json({ error: "Invalid channel" });
-    }
-
     if (embed) {
-      const embedMsg = new EmbedBuilder()
+      const e = new EmbedBuilder()
         .setDescription(message)
-        .setColor(
-          color ? parseInt(color.replace("#", ""), 16) : 0x5865F2
-        );
+        .setColor(color ? parseInt(color.replace("#", ""), 16) : 0x5865f2);
 
-      await channel.send({ embeds: [embedMsg] });
+      await channel.send({ embeds: [e] });
     } else {
       await channel.send({ content: message });
     }
@@ -128,12 +107,10 @@ app.post("/api/send", async (req, res) => {
   }
 });
 
-/* ================= START ================= */
-
-const PORT = process.env.PORT || 3000;
-
+// ================= START SERVER =================
 client.login(process.env.BOT_TOKEN);
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Dashboard running at http://localhost:${PORT}`);
 });
