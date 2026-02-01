@@ -33,7 +33,10 @@
       background: #020617;
     }
 
-    select, textarea, button, input[type="color"] {
+    select,
+    textarea,
+    button,
+    input[type="color"] {
       width: 100%;
       margin-top: 8px;
       padding: 8px;
@@ -67,13 +70,29 @@
       flex-direction: column;
     }
 
-    .placeholder {
+    /* MESSAGE VIEWER */
+    #chatBox {
       flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 15px;
+      overflow-y: auto;
+      background: #0f172a;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .author {
+      font-weight: bold;
+      color: #60a5fa;
+    }
+
+    .time {
+      font-size: 11px;
       color: #94a3b8;
-      font-size: 14px;
+      margin-left: 6px;
     }
 
     .sendBox {
@@ -112,10 +131,14 @@
   <!-- MAIN -->
   <div class="main">
 
-    <div class="placeholder">
-      Messages are sent as the bot. Message history is not loaded.
+    <!-- MESSAGE VIEW -->
+    <div id="chatBox">
+      <div style="color:#94a3b8;">
+        Select a server and channel to load messages.
+      </div>
     </div>
 
+    <!-- SEND MESSAGE -->
     <div class="sendBox">
       <textarea
         id="message"
@@ -130,7 +153,7 @@
 
 </div>
 
-<!-- IMPORTANT: script loaded last -->
+<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
