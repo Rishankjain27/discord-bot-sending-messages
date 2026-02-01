@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>MCS Bot Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <style>
     body {
       margin: 0;
@@ -19,26 +18,21 @@
       font-size: 20px;
       font-weight: bold;
       border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .container {
       display: grid;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 300px 1fr;
       height: calc(100vh - 60px);
     }
 
-    /* SIDEBAR */
     .sidebar {
       border-right: 1px solid #1e293b;
       padding: 15px;
       background: #020617;
-    }
-
-    label {
-      font-size: 13px;
-      margin-top: 15px;
-      display: block;
-      color: #94a3b8;
     }
 
     select, textarea, button, input[type="color"] {
@@ -49,6 +43,13 @@
       color: #e5e7eb;
       border: 1px solid #1e293b;
       border-radius: 4px;
+    }
+
+    label {
+      font-size: 13px;
+      margin-top: 15px;
+      display: block;
+      color: #94a3b8;
     }
 
     button {
@@ -63,13 +64,11 @@
       background: #1d4ed8;
     }
 
-    /* MAIN */
     .main {
       display: flex;
       flex-direction: column;
     }
 
-    /* CHAT BOX */
     #chatBox {
       flex: 1;
       padding: 15px;
@@ -78,12 +77,9 @@
     }
 
     .message {
-      margin-bottom: 12px;
-      padding: 8px;
-      background: #020617;
-      border-radius: 6px;
-      border: 1px solid #1e293b;
-      font-size: 14px;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #1e293b;
     }
 
     .author {
@@ -97,19 +93,36 @@
       margin-left: 6px;
     }
 
-    /* SEND BOX */
     .sendBox {
       border-top: 1px solid #1e293b;
       padding: 15px;
       background: #020617;
     }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .row label {
+      margin: 0;
+      font-size: 12px;
+    }
+
+    a.login {
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: bold;
+    }
   </style>
 </head>
-
 <body>
 
 <header>
   MCS Discord Bot Dashboard
+  <a class="login" href="/auth/login">Login with Discord</a>
 </header>
 
 <div class="container">
@@ -123,29 +136,25 @@
     <select id="channel"></select>
 
     <label>
-      <input type="checkbox" id="useEmbed" />
+      <input type="checkbox" id="embed" />
       Send as Embed
     </label>
 
     <label>Embed Color</label>
-    <input type="color" id="embedColor" value="#5865F2" />
+    <input type="color" id="color" value="#5865F2" />
   </div>
 
   <!-- MAIN -->
   <div class="main">
 
-    <!-- CHAT -->
+    <!-- CHAT VIEW -->
     <div id="chatBox">
       <div style="color:#94a3b8;">Select a server and channel to load messages.</div>
     </div>
 
-    <!-- SEND -->
+    <!-- SEND MESSAGE -->
     <div class="sendBox">
-      <textarea
-        id="message"
-        rows="3"
-        placeholder="Type message as the bot..."
-      ></textarea>
+      <textarea id="message" rows="3" placeholder="Type message to send as the bot..."></textarea>
       <button onclick="sendMessage()">Send Message</button>
     </div>
 
@@ -155,33 +164,6 @@
 
 <!-- SCRIPT -->
 <script src="script.js"></script>
-
-<script>
-  function sendMessage() {
-    const channelId = document.getElementById("channel").value;
-    const message = document.getElementById("message").value;
-    const embed = document.getElementById("useEmbed").checked;
-    const color = document.getElementById("embedColor").value;
-
-    if (!message.trim()) return;
-
-    fetch("/api/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        channelId,
-        message,
-        embed,
-        color
-      })
-    }).then(() => {
-      document.getElementById("message").value = "";
-      setTimeout(() => {
-        if (typeof loadMessages === "function") loadMessages();
-      }, 500);
-    });
-  }
-</script>
 
 </body>
 </html>
