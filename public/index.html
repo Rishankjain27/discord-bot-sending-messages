@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MCS Bot Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+
+    header {
+      background: #020617;
+      padding: 15px 20px;
+      font-size: 20px;
+      font-weight: bold;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      height: calc(100vh - 60px);
+    }
+
+    .sidebar {
+      border-right: 1px solid #1e293b;
+      padding: 15px;
+      background: #020617;
+    }
+
+    select, textarea, button, input[type="color"] {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      background: #020617;
+      color: #e5e7eb;
+      border: 1px solid #1e293b;
+      border-radius: 4px;
+    }
+
+    label {
+      font-size: 13px;
+      margin-top: 15px;
+      display: block;
+      color: #94a3b8;
+    }
+
+    button {
+      background: #2563eb;
+      cursor: pointer;
+      margin-top: 12px;
+      font-weight: bold;
+      border: none;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .placeholder {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .sendBox {
+      border-top: 1px solid #1e293b;
+      padding: 15px;
+      background: #020617;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  MCS Discord Bot Dashboard
+</header>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <label>Server</label>
+    <select id="guild"></select>
+
+    <label>Channel</label>
+    <select id="channel"></select>
+
+    <label>
+      <input type="checkbox" id="embed" />
+      Send as Embed
+    </label>
+
+    <label>Embed Color</label>
+    <input type="color" id="color" value="#5865F2" />
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="placeholder">
+      Messages are sent as the bot. Message history is not loaded.
+    </div>
+
+    <div class="sendBox">
+      <textarea
+        id="message"
+        rows="3"
+        placeholder="Type message to send as the bot..."
+      ></textarea>
+
+      <button onclick="sendMessage()">Send Message</button>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- IMPORTANT: script loaded last -->
+<script src="script.js"></script>
+
+</body>
+</html>
