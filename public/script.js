@@ -1,5 +1,6 @@
 const guild = document.getElementById("guild");
 const channel = document.getElementById("channel");
+const chatBox = document.getElementById("chatBox");
 const messageInput = document.getElementById("message");
 const embedCheckbox = document.getElementById("embed");
 const colorPicker = document.getElementById("color");
@@ -23,6 +24,7 @@ fetch("/api/guilds")
   });
 
 guild.addEventListener("change", loadChannels);
+channel.addEventListener("change", loadMessages);
 
 /* ================= LOAD CHANNELS ================= */
 
@@ -37,6 +39,32 @@ function loadChannels() {
         opt.textContent = "#" + c.name;
         channel.appendChild(opt);
       });
+      loadMessages();
+    });
+}
+
+/* ================= LOAD MESSAGES ================= */
+
+function loadMessages() {
+  if (!channel.value) return;
+
+  fetch(`/api/messages/${channel.value}`)
+    .then(res => res.json())
+    .then(messages => {
+      chatBox.innerHTML = "";
+
+      messages.forEach(m => {
+        const div = document.createElement("div");
+        div.className = "message";
+        div.innerHTML = `
+          <span class="author">${m.author}</span>
+          <span class="time">${m.time}</span><br>
+          ${m.content || "<i>No content</i>"}
+        `;
+        chatBox.appendChild(div);
+      });
+
+      chatBox.scrollTop = chatBox.scrollHeight;
     });
 }
 
@@ -52,10 +80,8 @@ function sendMessage() {
       embed: embedCheckbox.checked,
       color: colorPicker.value
     })
-  })
-  .then(res => res.json())
-  .then(() => {
+  }).then(() => {
     messageInput.value = "";
-    alert("Message sent");
+    setTimeout(loadMessages, 500);
   });
 }
